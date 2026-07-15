@@ -31,9 +31,47 @@
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+    animation:bgDrift 50s linear infinite;
   }
   a{color:inherit;}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+  /* ---------- Decorative background orbs ---------- */
+  .orb{
+    position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+    filter:blur(60px);opacity:0.35;
+  }
+  .orb-1{
+    width:420px;height:420px;top:-140px;right:-100px;
+    background:radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    animation:floatOrb1 22s ease-in-out infinite;
+  }
+  .orb-2{
+    width:360px;height:360px;bottom:-160px;left:-120px;
+    background:radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+    animation:floatOrb2 26s ease-in-out infinite;
+  }
+  @keyframes bgDrift{
+    from{background-position:0 0, 0 0;}
+    to{background-position:220px 220px, 0 0;}
+  }
+  @keyframes floatOrb1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-40px,30px) scale(1.08);}
+  }
+  @keyframes floatOrb2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(30px,-30px) scale(1.1);}
+  }
+
+  /* ---------- Entrance animation ---------- */
+  @keyframes fadeInUp{
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .reveal{animation:fadeInUp .7s cubic-bezier(.16,.84,.44,1) both;}
 
   /* ---------- Nav ---------- */
   header.nav{
@@ -42,7 +80,8 @@
   }
   .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;}
   .brand-mark{width:22px;height:22px;position:relative;flex-shrink:0;}
-  .brand-mark svg{width:100%;height:100%;display:block;}
+  .brand-mark svg{width:100%;height:100%;display:block;transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+  .brand:hover .brand-mark svg{transform:rotate(10deg) scale(1.08);}
   .nav-tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);letter-spacing:0.02em;}
 
   /* ---------- Hero ---------- */
@@ -52,7 +91,16 @@
     letter-spacing:0.12em;text-transform:uppercase;margin:0 0 18px;
     display:flex;align-items:center;gap:8px;
   }
-  .eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 3px var(--accent-2-soft);}
+  .eyebrow::before{
+    content:'';width:7px;height:7px;border-radius:50%;background:var(--accent-2);
+    box-shadow:0 0 0 3px var(--accent-2-soft);
+    animation:pulseRing 2s ease-out infinite;
+  }
+  @keyframes pulseRing{
+    0%{box-shadow:0 0 0 0 rgba(51,214,166,0.45);}
+    70%{box-shadow:0 0 0 8px rgba(51,214,166,0);}
+    100%{box-shadow:0 0 0 0 rgba(51,214,166,0);}
+  }
   h1{
     font-family:'Space Grotesk',sans-serif;font-weight:600;
     font-size:clamp(34px,5vw,54px);line-height:1.05;letter-spacing:-0.02em;
@@ -90,14 +138,12 @@
     transition:transform .12s ease, border-color .12s ease;
   }
   .swatch:hover{transform:translateY(-1px);}
-  .swatch.active{border-color:var(--text);}
-
-  .locked{position:relative;opacity:0.55;}
-  .locked::after{
-    content:'PRO';font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.06em;
-    background:var(--accent-soft);color:var(--accent);padding:3px 7px;border-radius:5px;margin-left:8px;
+  .swatch.active{border-color:var(--text);animation:pop .3s ease;}
+  @keyframes pop{
+    0%{transform:scale(1);}
+    45%{transform:scale(1.22);}
+    100%{transform:scale(1);}
   }
-  .locked input, .locked select, .locked .swatches{pointer-events:none;filter:grayscale(0.3);}
 
   select{
     background:var(--surface-2);border:1px solid var(--border);color:var(--text);
@@ -112,10 +158,27 @@
   }
   .btn:hover{filter:brightness(1.08);}
   .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary{background:var(--accent);color:#fff;position:relative;overflow:hidden;}
+  .btn-primary::after{
+    content:'';position:absolute;top:0;left:-60%;width:35%;height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform:skewX(-20deg);animation:shimmer 3.4s ease-in-out infinite;
+  }
+  .btn[disabled]::after{content:none;}
   .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
   .btn-block{width:100%;}
   .btn[disabled]{opacity:0.45;cursor:not-allowed;filter:none;}
+  @keyframes shimmer{
+    0%{left:-60%;}
+    55%{left:130%;}
+    100%{left:130%;}
+  }
+  .spinner{
+    width:13px;height:13px;border-radius:50%;display:inline-block;
+    border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ---------- Preview panel ---------- */
   .preview-card{
@@ -127,83 +190,93 @@
     aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
     overflow:hidden;margin-bottom:18px;
   }
-  .preview-frame canvas{max-width:82%;max-height:82%;border-radius:4px;}
+  .preview-frame canvas{max-width:82%;max-height:82%;border-radius:4px;display:none;}
+  .generate-hint{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:20px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    color:var(--text-dim);line-height:1.5;
+  }
   .scanline{
     position:absolute;left:0;right:0;height:38%;
     background:linear-gradient(180deg, transparent, rgba(124,92,252,0.22), transparent);
     top:-40%;pointer-events:none;
   }
   .scanline.sweep{animation:sweep 1.1s ease-out;}
+  .scanline.idle{animation:idleScan 2.8s ease-in-out infinite;}
   @keyframes sweep{
     0%{top:-40%;}
     100%{top:100%;}
   }
-  .corner{position:absolute;width:16px;height:16px;border-color:var(--accent);opacity:0.5;}
-  .corner.tl{top:8px;left:8px;border-top:2px solid;border-left:2px solid;border-radius:4px 0 0 0;}
-  .corner.tr{top:8px;right:8px;border-top:2px solid;border-right:2px solid;border-radius:0 4px 0 0;}
-  .corner.bl{bottom:8px;left:8px;border-bottom:2px solid;border-left:2px solid;border-radius:0 0 0 4px;}
-  .corner.br{bottom:8px;right:8px;border-bottom:2px solid;border-right:2px solid;border-radius:0 0 4px 0;}
+  @keyframes idleScan{
+    0%{top:-40%;opacity:.45;}
+    50%{opacity:.85;}
+    100%{top:100%;opacity:.45;}
+  }
+  .corner{position:absolute;width:16px;height:16px;border-color:var(--accent);opacity:0.5;animation:cornerPulse 3.2s ease-in-out infinite;}
+  .corner.tl{top:8px;left:8px;border-top:2px solid;border-left:2px solid;border-radius:4px 0 0 0;animation-delay:0s;}
+  .corner.tr{top:8px;right:8px;border-top:2px solid;border-right:2px solid;border-radius:0 4px 0 0;animation-delay:.3s;}
+  .corner.bl{bottom:8px;left:8px;border-bottom:2px solid;border-left:2px solid;border-radius:0 0 0 4px;animation-delay:.6s;}
+  .corner.br{bottom:8px;right:8px;border-bottom:2px solid;border-right:2px solid;border-radius:0 0 4px 0;animation-delay:.9s;}
+  @keyframes cornerPulse{
+    0%,100%{opacity:.4;}
+    50%{opacity:.9;}
+  }
 
   .status-row{display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-dim);margin-bottom:16px;}
   .status-pill{display:flex;align-items:center;gap:6px;}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-2);}
-  .dot.free{background:#57546A;}
+  .dot:not(.locked){animation:pulseRingDot 1.8s ease-out infinite;}
+  .dot.locked{background:#57546A;}
+  @keyframes pulseRingDot{
+    0%{box-shadow:0 0 0 0 rgba(51,214,166,0.45);}
+    70%{box-shadow:0 0 0 6px rgba(51,214,166,0);}
+    100%{box-shadow:0 0 0 0 rgba(51,214,166,0);}
+  }
 
   .download-row{display:flex;gap:10px;}
 
-  /* ---------- Pricing ---------- */
-  .pro-section{padding:70px 0;border-top:1px solid var(--border);margin-top:20px;}
-  .pro-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:50px;align-items:center;}
-  @media (max-width:860px){.pro-grid{grid-template-columns:1fr;gap:34px;}}
-  .pro-grid h2{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:600;letter-spacing:-0.01em;margin:0 0 14px;}
-  .pro-grid p{color:var(--text-dim);line-height:1.65;font-size:15px;max-width:46ch;}
-  .feature-list{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px;}
-  .feature-list li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;}
-  .check{width:18px;height:18px;border-radius:5px;background:var(--accent-2-soft);color:var(--accent-2);
-    display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;}
-
-  .price-card{
-    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-    padding:32px;text-align:center;
-  }
-  .price-tag{font-family:'Space Grotesk',sans-serif;font-size:46px;font-weight:700;letter-spacing:-0.02em;}
-  .price-tag span{font-size:16px;color:var(--text-dim);font-weight:500;}
-  .price-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin:6px 0 26px;}
-  .unlocked-badge{
-    display:none;align-items:center;justify-content:center;gap:8px;
-    background:var(--accent-2-soft);color:var(--accent-2);border-radius:10px;
-    padding:13px;font-family:'JetBrains Mono',monospace;font-size:13px;
-  }
+  .price-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin:14px 0 0;text-align:center;}
 
   footer{padding:34px 0 50px;border-top:1px solid var(--border);}
   footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   footer p{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);margin:0;}
 
   @media (prefers-reduced-motion: reduce){
-    .scanline.sweep{animation:none;}
+    body{animation:none;}
+    .orb-1,.orb-2{animation:none;}
+    .reveal{animation:none;}
+    .scanline.sweep,.scanline.idle{animation:none;}
+    .corner{animation:none;}
+    .eyebrow::before,.dot{animation:none;}
+    .swatch.active{animation:none;}
+    .btn-primary::after{animation:none;display:none;}
+    .brand-mark svg{transition:none;}
   }
 </style>
 </head>
 <body>
 
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
 <div class="wrap">
-  <header class="nav">
+  <header class="nav reveal">
     <div class="brand">
       <span class="brand-mark">
         <svg viewBox="0 0 22 22"><rect width="22" height="22" rx="5" fill="#7C5CFC"/><rect x="4" y="4" width="6" height="6" fill="#121218"/><rect x="12" y="4" width="6" height="6" fill="#121218"/><rect x="4" y="12" width="6" height="6" fill="#121218"/><rect x="13" y="13" width="4" height="4" fill="#121218"/></svg>
       </span>
       Scanline
     </div>
-    <div class="nav-tag">QR generator — no signup</div>
+    <div class="nav-tag">QR generator — $3 flat, no signup</div>
   </header>
 
   <section class="hero">
-    <p class="eyebrow">Live encoder</p>
-    <h1>Turn any link into <em>a scan.</em></h1>
-    <p class="hero-sub">Paste a URL, get a crisp QR code back instantly. Free to use — unlock custom colors, logo embedding and print-ready exports for a one-time $5.</p>
+    <p class="eyebrow reveal">Live encoder</p>
+    <h1 class="reveal" style="animation-delay:.08s">Turn any link into <em>a scan.</em></h1>
+    <p class="hero-sub reveal" style="animation-delay:.16s">Paste a URL, pay a flat $3, and get a crisp, print-ready QR code back — custom colors, logo embedding and a 2000×2000 export all included.</p>
 
     <div class="grid">
-      <div>
+      <div class="reveal" style="animation-delay:.24s">
         <div class="input-row">
           <label class="field-label" for="qr-input">Text or URL</label>
           <input type="text" id="qr-input" placeholder="https://your-site.com" value="https://example.com">
@@ -223,7 +296,7 @@
             </select>
           </div>
 
-          <div class="option-row locked" id="row-color">
+          <div class="option-row" id="row-color">
             <div>
               <div class="opt-name">Custom colors</div>
               <div class="opt-desc">Match your brand instead of default black</div>
@@ -236,7 +309,7 @@
             </div>
           </div>
 
-          <div class="option-row locked" id="row-logo">
+          <div class="option-row" id="row-logo">
             <div>
               <div class="opt-name">Embed logo</div>
               <div class="opt-desc">Center your logo inside the code</div>
@@ -244,68 +317,48 @@
             <input type="file" id="logo-input" accept="image/*" style="max-width:130px;font-size:11px;color:var(--text-dim);">
           </div>
 
-          <div class="option-row locked" id="row-res">
+          <div class="option-row" id="row-res">
             <div>
               <div class="opt-name">Export resolution</div>
-              <div class="opt-desc">Print-ready 2000px PNG, no watermark</div>
+              <div class="opt-desc">Print-ready 2000px PNG export</div>
             </div>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-dim);">2000×2000</span>
           </div>
         </div>
       </div>
 
-      <div class="preview-card">
+      <div class="preview-card reveal" style="animation-delay:.32s">
         <div class="status-row">
-          <span class="status-pill"><span class="dot free" id="status-dot"></span><span id="status-text">Free preview</span></span>
+          <span class="status-pill"><span class="dot locked" id="status-dot"></span><span id="status-text">Locked</span></span>
           <span id="ecl-readout">ECL · M</span>
         </div>
         <div class="preview-frame">
           <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
           <div class="scanline" id="scanline"></div>
           <canvas id="qr-canvas"></canvas>
+          <div class="generate-hint" id="generate-hint">Pay $3 to generate your QR code</div>
         </div>
         <div class="download-row">
-          <button class="btn btn-primary btn-block" id="download-btn">Download PNG</button>
+          <button class="btn btn-primary btn-block" id="download-btn">Generate QR — $3</button>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="pro-section">
-    <div class="pro-grid">
-      <div>
-        <p class="eyebrow">Upgrade</p>
-        <h2>Everything free, plus what a real deployment needs.</h2>
-        <p>The free tier is genuinely usable — generate and download as many codes as you like. Pro removes the ceiling for anyone shipping codes into print or a product.</p>
-        <ul class="feature-list">
-          <li><span class="check">✓</span>Custom foreground &amp; background colors</li>
-          <li><span class="check">✓</span>Center-embedded logo</li>
-          <li><span class="check">✓</span>2000×2000 print-ready export, no watermark</li>
-          <li><span class="check">✓</span>Unlock stays on this device — pay once</li>
-        </ul>
-      </div>
-
-      <div class="price-card">
-        <div class="price-tag">$5<span>&nbsp;one-time</span></div>
-        <div class="price-note">No subscription · Stripe checkout</div>
-        <a class="btn btn-primary btn-block" id="pay-btn" href="#" target="_blank" rel="noopener">Unlock Pro</a>
-        <div class="unlocked-badge" id="unlocked-badge">✓ Pro unlocked on this device</div>
+        <div class="price-note">One-time $3 · unlocks this device · Stripe checkout</div>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="wrap">
-      <p>Scanline — generate freely, upgrade if it's useful.</p>
-      <p id="footer-status">Status: Free</p>
+      <p>Scanline — one flat price, no tiers.</p>
+      <p id="footer-status">Status: $3 to generate</p>
     </div>
   </footer>
 </div>
 
 <script>
 (function(){
-  const STORAGE_KEY = 'scanline_pro_unlocked';
-  const PAYMENT_LINK_URL = 'https://buy.stripe.com/test_3cI4gA8RgfGZfJAdr6gEg08'; // <-- swap in your real Stripe Payment Link
+  const STORAGE_KEY = 'scanline_unlocked';
+  const INPUT_KEY = 'scanline_last_input';
+  const ECL_KEY = 'scanline_last_ecl';
 
   const qrInput = document.getElementById('qr-input');
   const eclSelect = document.getElementById('opt-ecl');
@@ -315,19 +368,15 @@
   const swatches = document.querySelectorAll('.swatch');
   const logoInput = document.getElementById('logo-input');
   const downloadBtn = document.getElementById('download-btn');
-  const payBtn = document.getElementById('pay-btn');
-  const unlockedBadge = document.getElementById('unlocked-badge');
+  const generateHint = document.getElementById('generate-hint');
   const statusDot = document.getElementById('status-dot');
   const statusText = document.getElementById('status-text');
   const footerStatus = document.getElementById('footer-status');
-  const rowColor = document.getElementById('row-color');
-  const rowLogo = document.getElementById('row-logo');
-  const rowRes = document.getElementById('row-res');
 
-  let isPro = false;
+  let unlocked = false;
   let currentColor = '#121218';
   let logoImage = null;
-  let qr = null;
+  let debounceTimer;
 
   function isUnlocked(){
     try { return localStorage.getItem(STORAGE_KEY) === 'true'; } catch(e){ return false; }
@@ -336,68 +385,41 @@
     try { localStorage.setItem(STORAGE_KEY, 'true'); } catch(e){}
   }
 
-  function applyProState(){
-    isPro = isUnlocked();
-    if (isPro){
-      [rowColor, rowLogo, rowRes].forEach(r => r.classList.remove('locked'));
-      unlockedBadge.style.display = 'flex';
-      payBtn.style.display = 'none';
-      statusDot.classList.remove('free');
-      statusText.textContent = 'Pro';
-      footerStatus.textContent = 'Status: Pro unlocked';
-    } else {
-      [rowColor, rowLogo, rowRes].forEach(r => r.classList.add('locked'));
-      unlockedBadge.style.display = 'none';
-      payBtn.style.display = 'inline-flex';
-      statusDot.classList.add('free');
-      statusText.textContent = 'Free preview';
-      footerStatus.textContent = 'Status: Free';
-    }
+  // Restore last-used text/ECL so nothing is lost across the Stripe redirect.
+  try {
+    const savedInput = localStorage.getItem(INPUT_KEY);
+    if (savedInput) qrInput.value = savedInput;
+    const savedEcl = localStorage.getItem(ECL_KEY);
+    if (savedEcl) eclSelect.value = savedEcl;
+  } catch(e){}
+
+  function applyState(){
+    unlocked = isUnlocked();
+    canvas.style.display = unlocked ? 'block' : 'none';
+    generateHint.style.display = unlocked ? 'none' : 'flex';
+    statusDot.classList.toggle('locked', !unlocked);
+    scanline.classList.toggle('idle', !unlocked);
+    statusText.textContent = unlocked ? 'Unlocked' : 'Locked';
+    footerStatus.textContent = unlocked ? 'Status: Unlocked on this device' : 'Status: $3 to generate';
+    downloadBtn.disabled = false;
+    downloadBtn.textContent = unlocked ? 'Download PNG' : 'Generate QR — $3';
+    if (unlocked) renderQR(true);
   }
-
-  // Check for return-from-Stripe redirect: ?session_id=cs_test_...
-  // We do NOT trust this on its own — we ask our serverless function to verify
-  // the session with Stripe's API before unlocking anything.
-  const params = new URLSearchParams(window.location.search);
-  const sessionId = params.get('session_id');
-
-  if (sessionId){
-    statusText.textContent = 'Verifying payment…';
-    fetch('/api/verify-payment?session_id=' + encodeURIComponent(sessionId))
-      .then(res => res.json())
-      .then(data => {
-        if (data.paid){
-          setUnlocked();
-        }
-        window.history.replaceState({}, '', window.location.pathname);
-        applyProState();
-        renderQR(true);
-      })
-      .catch(() => {
-        // Fail closed: if verification can't be reached, stay on free tier
-        window.history.replaceState({}, '', window.location.pathname);
-        applyProState();
-      });
-  }
-
-  payBtn.href = PAYMENT_LINK_URL;
-  applyProState();
 
   function renderQR(sweep){
     const value = qrInput.value.trim() || 'https://example.com';
-    const fg = isPro ? currentColor : '#121218';
     const size = 320;
 
-    qr = new QRious({
+    new QRious({
       element: canvas,
       value: value,
       size: size,
       background: '#ffffff',
-      foreground: fg,
+      foreground: currentColor,
       level: eclSelect.value
     });
 
-    if (isPro && logoImage){
+    if (logoImage){
       const ctx = canvas.getContext('2d');
       const logoSize = size * 0.2;
       const x = (size - logoSize) / 2;
@@ -416,66 +438,120 @@
     }
   }
 
-  let debounceTimer;
   qrInput.addEventListener('input', () => {
+    try { localStorage.setItem(INPUT_KEY, qrInput.value); } catch(e){}
+    if (!unlocked) return;
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => renderQR(true), 250);
   });
-  eclSelect.addEventListener('change', () => renderQR(true));
+
+  eclSelect.addEventListener('change', () => {
+    try { localStorage.setItem(ECL_KEY, eclSelect.value); } catch(e){}
+    if (unlocked) renderQR(true);
+  });
 
   swatches.forEach(sw => {
     sw.addEventListener('click', () => {
-      if (!isPro) return;
       swatches.forEach(s => s.classList.remove('active'));
       sw.classList.add('active');
       currentColor = sw.getAttribute('data-color');
-      renderQR(true);
+      if (unlocked) renderQR(true);
     });
   });
 
   logoInput.addEventListener('change', (e) => {
-    if (!isPro) return;
     const file = e.target.files[0];
     if (!file) return;
     const img = new Image();
-    img.onload = () => { logoImage = img; renderQR(true); };
+    img.onload = () => { logoImage = img; if (unlocked) renderQR(true); };
     img.src = URL.createObjectURL(file);
   });
 
-  downloadBtn.addEventListener('click', () => {
-    const link = document.createElement('a');
-    let exportCanvas = canvas;
-
-    if (isPro){
-      // Re-render at high resolution for pro export
-      exportCanvas = document.createElement('canvas');
-      const size = 2000;
-      const tmpQR = new QRious({
-        element: exportCanvas,
-        value: qrInput.value.trim() || 'https://example.com',
-        size: size,
-        background: '#ffffff',
-        foreground: currentColor,
-        level: eclSelect.value
-      });
-      if (logoImage){
-        const ctx = exportCanvas.getContext('2d');
-        const logoSize = size * 0.2;
-        const x = (size - logoSize) / 2;
-        const y = (size - logoSize) / 2;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x - 20, y - 20, logoSize + 40, logoSize + 40);
-        ctx.drawImage(logoImage, x, y, logoSize, logoSize);
-      }
+  function exportQRCodeCanvas(){
+    const exportCanvas = document.createElement('canvas');
+    const size = 2000;
+    new QRious({
+      element: exportCanvas,
+      value: qrInput.value.trim() || 'https://example.com',
+      size: size,
+      background: '#ffffff',
+      foreground: currentColor,
+      level: eclSelect.value
+    });
+    if (logoImage){
+      const ctx = exportCanvas.getContext('2d');
+      const logoSize = size * 0.2;
+      const x = (size - logoSize) / 2;
+      const y = (size - logoSize) / 2;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(x - 20, y - 20, logoSize + 40, logoSize + 40);
+      ctx.drawImage(logoImage, x, y, logoSize, logoSize);
     }
 
+    const link = document.createElement('a');
     link.download = 'scanline-qr.png';
     link.href = exportCanvas.toDataURL('image/png');
     link.click();
+  }
+
+  function startCheckout(){
+    downloadBtn.disabled = true;
+    downloadBtn.innerHTML = '<span class="spinner"></span> Redirecting…';
+
+    fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.url){
+          window.location = data.url;
+        } else {
+          throw new Error('Checkout session failed');
+        }
+      })
+      .catch(() => {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = 'Generate QR — $3';
+        alert('Unable to start payment. Please try again.');
+      });
+  }
+
+  downloadBtn.addEventListener('click', () => {
+    if (unlocked){
+      exportQRCodeCanvas();
+    } else {
+      startCheckout();
+    }
   });
 
-  // initial render
-  renderQR(false);
+  // Check for return-from-Stripe redirect: ?session_id=cs_test_...
+  // We do NOT trust this on its own — we ask our serverless function to verify
+  // the session with Stripe's API before unlocking anything.
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+
+  if (sessionId){
+    statusText.textContent = 'Verifying payment…';
+    fetch('/api/verify-payment?session_id=' + encodeURIComponent(sessionId))
+      .then(res => res.json())
+      .then(data => {
+        if (data.paid){
+          setUnlocked();
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+        applyState();
+      })
+      .catch(() => {
+        // Fail closed: if verification can't be reached, stay locked.
+        window.history.replaceState({}, '', window.location.pathname);
+        applyState();
+      });
+  } else {
+    applyState();
+  }
 })();
 </script>
 
